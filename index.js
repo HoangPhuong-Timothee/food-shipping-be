@@ -7,6 +7,15 @@ const PORT = process.env.PORT || 5000
 const routes = require('./routes/index')
 const connectDB = require('./configs/dbConnection')
 
+//Firebase admin configuration
+var admin = require('firebase-admin');
+var serviceAccount = require('./serviceAccountKey.json');
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
+
+
 //Config middleware
 const app = express()
 app.use(express.json())
