@@ -5,11 +5,11 @@ const User = require('../models/user.model')
 const errorHandler = require('../utils/error')
 const salt = await bcrypt.genSalt(10)
 
-const signUp = async (req, res) => {
+const signUp = async (req, res, next) => {
     const { username, email, password } = req.body
     try {
         await admin.auth().getUserByEmail(email)
-        return next(errorHandler(400, "Email is already used by another account!"))
+        return next(errorHandler(400, "Email is already in used by another account!"))
     } catch (err) {
         if (err.code === 'auth/user-not-found') {
             try { 
@@ -36,7 +36,7 @@ const signUp = async (req, res) => {
     }
 }
 
-const signIn = async (req, res) => {
+const signIn = async (req, res, next) => {
     const { email } = req.body
     try {
         const validUser = await User.findOne({ email }, { __v: 0, updatedAt: 0, createdAt: 0 })
@@ -44,7 +44,7 @@ const signIn = async (req, res) => {
         const checkPassword = await bcrypt.compare(password, validUser.password)
         if (!checkPassword) return next(errorHandler(401, "Wrong password!"))
         const token = jwt.sign({ id: validUser._id, userRole: validUser.userRole, email: validUser.email }, JWT_SECRET_KEY)
-        const { password, email, ...rest } = validUser._doc
+        const { password, ...rest } = validUser._doc
         res
             .cookies("access_token", token, {
                 httpOnly: true,
@@ -57,7 +57,7 @@ const signIn = async (req, res) => {
     }
 }
 
-const logout = (req, res) => {
+const logout = (req, res, next) => {
    try {
         res.clearCookies("access_token")
         res.status(200).json("Logged out successfully!")

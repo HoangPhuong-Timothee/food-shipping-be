@@ -1,8 +1,9 @@
 const router = require('express').Router()
+const { authorizeUser } = require('../utils/verifyUser')
+const { getUserInfo, deleteAccount, updateUserInfo } = require('../controllers/user.controller')
 
-router.get('/', getAllUsers)
-router.get('/:id', getUser)
-router.delete('/:id', deleteUser)
-
+router.get('/:id', authorizeUser, getUserInfo)
+router.put('/update/:id', authorizeUser, updateUserInfo)
+router.delete('/delete/:id', authorizeUser, deleteAccount)
 
 module.exports = router

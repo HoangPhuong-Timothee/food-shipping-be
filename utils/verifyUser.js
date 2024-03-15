@@ -23,7 +23,7 @@ const authorizeUser = (req, res, next) => {
 
 const authorizeVendor = (req, res, next) => {
     verifyUser(req, res, () => {
-        if (req.user.userRole ==='vendor') {
+        if (req.user.userRole === 'vendor' || req.user.userRole === 'admin') {
             next()
         } else {
             return next(errorHandler(404, 'Forbidden!'))
@@ -33,17 +33,7 @@ const authorizeVendor = (req, res, next) => {
 
 const authorizeDriver = (req, res, next) => {
     verifyUser(req, res, () => {
-        if (req.user.userRole === 'driver') {
-            next()
-        } else {
-            return next(errorHandler(404, 'Forbidden!'))
-        }
-    })
-}
-
-const authorizeClient = (req, res, next) => {
-    verifyUser(req, res, () => {
-        if (req.user.userRole === 'client') {
+        if (req.user.userRole === 'driver' || req.user.user === 'admin') {
             next()
         } else {
             return next(errorHandler(404, 'Forbidden!'))
@@ -61,4 +51,4 @@ const authorizeAdmin = (req, res, next) => {
     })
 }
 
-module.exports = { verifyUser, authorizeUser, authorizeDriver, authorizeClient, authorizeAdmin, authorizeVendor}
+module.exports = { verifyUser, authorizeUser, authorizeDriver, authorizeAdmin, authorizeVendor}
