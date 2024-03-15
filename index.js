@@ -31,7 +31,7 @@ app.get('/', (req, res) => {
     res.write('<h2>It\'s working!</h2>')
     res.end()
 })
-app.use('/', routes)
+app.use(routes)
 
 //Running server
 app.listen(PORT, () => {

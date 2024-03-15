@@ -33,7 +33,7 @@ const userSchema = mongoose.Schema({
         default: "client",
         enum: ["client", "admin", "driver", "vendor"]
     },
-    profile: {
+    avatar: {
         type: String,
         required: true,
         default: "https://www.svgrepo.com/show/382095/female-avatar-girl-face-woman-user-4.svg",
