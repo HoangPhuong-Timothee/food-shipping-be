@@ -37,7 +37,7 @@ const updateUserInfo = async (req, res, next) => {
     }
 }
 
-const getUserInfo = async (req, res) => {
+const getUserInfo = async (req, res, next) => {
     const userId = req.user.id
     if (userId !== req.params.id) {
         return next(errorHandler(401, "Unauthorized!"))
@@ -45,12 +45,12 @@ const getUserInfo = async (req, res) => {
     try {
         const user = await User.findUserById({ _id: userId }, { __v: 0, password: 0, updatedAt: 0, createdAt: 0 })
         res.status(200).json(user)
-    } catch (err) {
-        next(err)
+    } catch (error) {
+        next(error)
     }
 }
 
-const deleteAccount = async (req, res) => {
+const deleteAccount = async (req, res, next) => {
     const userId = req.user.id
     if (userId !== req.params.id) {
         return next(errorHandler(401, "Unauthorized!"))
@@ -58,8 +58,8 @@ const deleteAccount = async (req, res) => {
     try {
         await User.findByIdAndDelete(userId)
         res.status(200).json(`Delete account successfully!`)
-    } catch (err) {
-        next(err)
+    } catch (error) {
+        next(error)
     }
 }
 
