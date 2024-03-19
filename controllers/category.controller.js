@@ -16,7 +16,7 @@ const updateCategory = async (req, res, next) => {
     const { title, value, imageUrl } = req.body
     try {
         const isExistedCategory = await Category.findById(categoryId)
-        if (!categoryId) return next(errorHandler(404, "Category not found!"))
+        if (!isExistedCategory) return next(errorHandler(404, "Category not found!"))
         const newCategory = await Category.findByIdAndUpdate(categoryId, {
             $set: {
                 title: title,
@@ -34,14 +34,36 @@ const updateCategory = async (req, res, next) => {
 }
 
 const getAllCategories = async (req, res, next) => {
+    try {
+        const categories = await Category.findAll({}, { __v: 0 })
+        res.status(200).json(categories)
+    } catch (error) {
+        next(error)
+    }
+}
 
+const getRandomCategory = async (req, res, next) => {
+    let categories = []
+    try {
+        categories = await Category.aggregate([
+            { $match: { value: { $ne: "more" } } },
+            { $sample: { size: 7 } }
+        ])
+        const moreCategory = await Category.findOne({ value: more })
+        if (moreCategory) {
+            categories.push(moreCategory)
+        }
+        res.status(200).json(categories)
+    } catch (error) {
+        next(error)
+    }
 }
 
 const deleteCategory = async (req, res, next) => {
     const categoryId = req.params.id
     try {
         const isExistedCategory = await Category.findById(categoryId)
-        if (!categoryId) return next(errorHandler(404, "Category not found!"))
+        if (!isExistedCategory) return next(errorHandler(404, "Category not found!"))
         await Category.findByIdAndDelete(categoryId)
         res.status(200).json("Delete category successfull!")
     } catch (error) {
@@ -49,4 +71,4 @@ const deleteCategory = async (req, res, next) => {
     }
 }
 
-module.exports = { getAllCategories, createNewCategory, deleteCategory, updateCategory }
+module.exports = { getAllCategories, createNewCategory, deleteCategory, updateCategory, getRandomCategory }
